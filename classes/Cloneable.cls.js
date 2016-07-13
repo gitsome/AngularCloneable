@@ -30,10 +30,12 @@
                 // NOTE: passing in alreadyCloned avoids infinite loops
                 var reinstantiateCloneableItems = function (item, alreadyCloned) {
 
+                    // first we check if it is cloneable
                     if (angular.isCloneable(item) && !alreadyCloned) {
 
                         return item.clone();
 
+                    // next it could be an array
                     } else if (angular.isArray(item)) {
 
                         angular.forEach(item, function (arrayItem, arrayIndex) {
@@ -42,6 +44,7 @@
 
                         return item;
 
+                    // last, it's not clonable but it is an object
                     } else if (angular.isObject(item)) {
 
                         angular.forEach(item, function (itemValue, itemKey) {
@@ -50,6 +53,7 @@
 
                         return item;
 
+                    // it's something else, primitive etc...
                     } else {
 
                         return item;
