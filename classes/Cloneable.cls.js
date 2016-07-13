@@ -25,9 +25,9 @@
 
                 /*============ PRIVATE VARIABLES AND METHODS ============*/
 
-                // we have introduced a clonable contract, that invokes the clone method at the root level
-                // if however, we find nested objects that are also clonable, we should clone them too
-                // this will create a recursive search for clonable items
+                // Search all nested objects that are also cloneable, we should clone them too
+                // otherwise recursively return and replace cloneable objects
+                // NOTE: passing in alreadyCloned avoids infinite loops
                 var reinstantiateCloneableItems = function (item, alreadyCloned) {
 
                     if (angular.isCloneable(item) && !alreadyCloned) {
