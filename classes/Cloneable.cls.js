@@ -3,7 +3,7 @@
     /*============= EXTEND ANGULAR (1.5.5) ============*/
 
     angular.isCloneable = function (item) {
-        return item._AngularCloneable === true;
+        return angular.isObject(item) ? item._AngularCloneable === true : false;
     };
 
     /**
@@ -28,9 +28,9 @@
                 // we have introduced a clonable contract, that invokes the clone method at the root level
                 // if however, we find nested objects that are also clonable, we should clone them too
                 // this will create a recursive search for clonable items
-                var reinstantiateCloneableItems = function (item) {
+                var reinstantiateCloneableItems = function (item, alreadyCloned) {
 
-                    if (angular.isCloneable(item)) {
+                    if (angular.isCloneable(item) && !alreadyCloned) {
 
                         return item.clone();
 
@@ -72,9 +72,11 @@
                     // That is in most cases ultimately okay because you will end up with an object in the same state as if the constructor was called
                     // The downside is that if during the constructor an event is fired or external service's state is changed you would lose that during cloning
                     // If we wanted to add support for nested cloning that would run all class constructors we would need to alter angular.copy or write our own custom copy method
-                    var clonedItem = new instance.constructor(angular.copy(instance)); // what's so great is angular.copy is already a great and well tested deep copy that covers byteArrays and all kinds of goodness
 
-                    return reinstantiateCloneableItems(clonedItem);
+                    // what's so great is angular.copy is already a great and well tested deep copy that covers byteArrays and all kinds of goodness
+                    var clonedItem = new instance.constructor(angular.copy(instance));
+
+                    return reinstantiateCloneableItems(clonedItem, true);
                 };
             };
 
